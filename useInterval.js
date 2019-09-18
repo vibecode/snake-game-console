@@ -1,11 +1,11 @@
-const { useEffect, useRef } = required('react')
+const { useEffect, useRef } = require('react')
 
 module.exports = function useInterval(cb, delay) {
 	const savedCallback = useRef()
 
 	useEffect(() => {
 		savedCallback.current = cb
-	}, [callback])
+	}, [cb])
 
 	//set up the interval
 	useEffect(() => {

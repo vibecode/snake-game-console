@@ -49,8 +49,11 @@ const getItem = (x, y, snakeSegments) => {
 		return <Color red></Color>
 	}
 
-	for (const segment of snakeSegments) {
-		if (segment.x === x && segment.y === y) {
+	for (let i = 0; i < snakeSegments.length; i++) {
+		if (snakeSegments[i].x === x && snakeSegments[i].y === y) {
+			if (i === 0) {
+				return <Color yellow>■</Color>
+			}
 			return <Color green>■</Color>
 		}
 	}

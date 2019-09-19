@@ -6,20 +6,7 @@ const importJsx = require('import-jsx')
 const useInterval = require('./useInterval')
 const EndScreen = importJsx('./EndScreen')
 
-const FIELD_SIZE = 16
-const FIELD_ROW = [...new Array(FIELD_SIZE).keys()]
-
-const ARROW_UP = '\u001B[A'
-const ARROW_DOWN = '\u001B[B'
-const ARROW_LEFT = '\u001B[D'
-const ARROW_RIGHT = '\u001B[C'
-
-const DIRECTION = {
-	RIGHT: { x: 1, y: 0 },
-	LEFT: { x: -1, y: 0 },
-	TOP: { x: 0, y: -1 },
-	BOTTOM: { x: 0, y: 1 }
-}
+const { FIELD_SIZE, FIELD_ROW, ARROW, DIRECTION } = require('./constants')
 
 const limitByField = x => {
 	if (x >= FIELD_SIZE) {
@@ -31,26 +18,26 @@ const limitByField = x => {
 	return x
 }
 
-let foodItem = {
+const getFoodItem = () => ({
 	x: Math.floor(Math.random() * FIELD_SIZE),
 	y: Math.floor(Math.random() * FIELD_SIZE)
-}
+})
 
-function collidesWithFood(head, foodItem) {
+let foodItem = getFoodItem()
+
+const collidesWithFood = (head, foodItem) => {
 	return foodItem.x === head.x && foodItem.y === head.y
 }
 
-function newSnakePosition(segments, direction) {
+const newSnakePosition = (segments, direction) => {
 	const [head] = segments
 	const newHead = {
 		x: limitByField(head.x + direction.x),
 		y: limitByField(head.y + direction.y)
 	}
 	if (collidesWithFood(newHead, foodItem)) {
-		foodItem = {
-			x: Math.floor(Math.random() * FIELD_SIZE),
-			y: Math.floor(Math.random() * FIELD_SIZE)
-		}
+		foodItem = getFoodItem()
+
 		return [newHead, ...segments]
 	} else {
 		return [newHead, ...segments.slice(0, -1)]
@@ -83,16 +70,16 @@ const App = () => {
 		setRawMode(true)
 		stdin.on('data', data => {
 			const value = data.toString()
-			if (value == ARROW_UP) {
+			if (value == ARROW.UP) {
 				setDirection(DIRECTION.TOP)
 			}
-			if (value == ARROW_DOWN) {
+			if (value == ARROW.DOWN) {
 				setDirection(DIRECTION.BOTTOM)
 			}
-			if (value == ARROW_LEFT) {
+			if (value == ARROW.LEFT) {
 				setDirection(DIRECTION.LEFT)
 			}
-			if (value == ARROW_RIGHT) {
+			if (value == ARROW.RIGHT) {
 				setDirection(DIRECTION.RIGHT)
 			}
 		})
@@ -107,7 +94,7 @@ const App = () => {
 		() => {
 			setSnakeSegments(segments => newSnakePosition(segments, direction))
 		},
-		intersectsWithItself ? null : 50
+		intersectsWithItself ? null : 200
 	)
 
 	return (
